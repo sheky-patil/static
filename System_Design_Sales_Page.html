@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>System Design: The Complete Interview Masterclass — Shekhar Patil</title>
+<style>
+  :root {
+    --navy:#0B1E3D; --indigo:#3730A3; --blue:#1D4ED8; --accent:#3B82F6;
+    --gold:#F59E0B; --teal:#0D9488; --green:#059669; --red:#DC2626;
+    --body:#1E293B; --muted:#64748B; --light:#F1F5F9; --rule:#E2E8F0;
+    --cover:#060D1A; --sub:#93C5FD;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    color:var(--body);background:#fff;line-height:1.6}
+  a{color:var(--blue);text-decoration:none}
+
+  /* ── Hero ── */
+  .hero{background:linear-gradient(135deg,var(--cover) 0%,#0D1B3E 50%,#111827 100%);
+    color:#fff;padding:80px 20px 60px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;
+    background:radial-gradient(circle,rgba(59,130,246,0.15) 0%,transparent 70%);border-radius:50%}
+  .hero-badge{display:inline-block;background:rgba(245,158,11,0.15);border:1px solid var(--gold);
+    color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;
+    padding:5px 14px;border-radius:999px;margin-bottom:20px;text-transform:uppercase}
+  .hero h1{font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1.1;
+    margin-bottom:16px;max-width:800px;margin-left:auto;margin-right:auto}
+  .hero h1 span{color:var(--sub)}
+  .hero p{font-size:18px;color:#94A3B8;max-width:620px;margin:0 auto 32px}
+  .colorbar{height:4px;background:linear-gradient(90deg,#4361EE,#3B82F6,#60A5FA,#93C5FD);
+    margin-bottom:28px}
+  .hero-stats{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:36px}
+  .stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+    border-radius:10px;padding:16px 24px;min-width:110px}
+  .stat-num{font-size:28px;font-weight:800;color:var(--gold);display:block}
+  .stat-lbl{font-size:11px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px}
+  .btn-primary{display:inline-block;background:var(--gold);color:var(--navy);
+    font-weight:800;font-size:16px;padding:16px 40px;border-radius:8px;
+    transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(245,158,11,0.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.5);color:var(--navy)}
+  .hero-note{font-size:12px;color:#64748B;margin-top:12px}
+  .hero-note a{color:#60A5FA}
+
+  /* ── Section ── */
+  section{padding:64px 20px;max-width:900px;margin:0 auto}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    color:var(--indigo);margin-bottom:8px}
+  h2{font-size:clamp(22px,3.5vw,34px);font-weight:800;color:var(--navy);
+    margin-bottom:16px;line-height:1.15}
+  h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px}
+  p{color:var(--muted);font-size:16px;line-height:1.7}
+
+  /* ── Pain section ── */
+  .pain{background:var(--light);padding:56px 20px}
+  .pain-inner{max-width:900px;margin:0 auto}
+  .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:32px}
+  .pain-card{background:#fff;border-left:4px solid var(--red);border-radius:8px;padding:20px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  .pain-card h4{font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px}
+  .pain-card p{font-size:14px;color:var(--body)}
+
+  /* ── What you get ── */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:24px;margin-top:32px}
+  .feature{background:var(--light);border-radius:12px;padding:24px;
+    border-top:3px solid var(--indigo)}
+  .feature-icon{font-size:26px;margin-bottom:10px}
+  .feature h3{font-size:15px;color:var(--navy);margin-bottom:6px}
+  .feature p{font-size:14px}
+
+  /* ── Chapters ── */
+  .chapters{background:#F8FAFF;padding:56px 20px}
+  .chapters-inner{max-width:900px;margin:0 auto}
+  .ch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:12px;margin-top:24px}
+  .ch-item{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;
+    background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.07)}
+  .ch-num{background:var(--navy);color:var(--gold);font-size:11px;font-weight:800;
+    min-width:42px;height:42px;border-radius:6px;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0}
+  .ch-text strong{display:block;font-size:13.5px;color:var(--navy);margin-bottom:3px}
+  .ch-text span{font-size:12px;color:var(--muted)}
+
+  /* ── Diagrams preview ── */
+  .diagrams{padding:56px 20px;max-width:900px;margin:0 auto}
+  .diagram-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px;margin-top:24px}
+  .diagram-card{background:var(--navy);border-radius:10px;padding:20px;text-align:center;
+    border-bottom:3px solid var(--gold)}
+  .diagram-card .icon{font-size:28px;margin-bottom:8px}
+  .diagram-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+  .diagram-card p{font-size:11px;color:#94A3B8}
+
+  /* ── Q&A preview ── */
+  .qa-section{background:#F5F3FF;padding:56px 20px}
+  .qa-inner{max-width:900px;margin:0 auto}
+  .qa-list{margin-top:24px;display:flex;flex-direction:column;gap:12px}
+  .qa-item{background:#fff;border-left:4px solid #7C3AED;border-radius:6px;padding:16px 18px}
+  .qa-item .q{font-size:14px;font-weight:700;color:#4C1D95;margin-bottom:6px}
+  .qa-item .a{font-size:13.5px;color:var(--body)}
+
+  /* ── Author ── */
+  .author{padding:56px 20px;max-width:700px;margin:0 auto;text-align:center}
+  .author-avatar{width:80px;height:80px;border-radius:50%;background:var(--navy);
+    display:flex;align-items:center;justify-content:center;font-size:32px;
+    margin:0 auto 16px;border:3px solid var(--gold)}
+
+  /* ── Pricing ── */
+  .pricing{background:var(--navy);padding:72px 20px;text-align:center;color:#fff}
+  .price-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);
+    border-radius:16px;max-width:480px;margin:32px auto;padding:40px 32px}
+  .price-box .price{font-size:52px;font-weight:900;color:var(--gold);line-height:1}
+  .price-box .price-sub{color:#94A3B8;font-size:13px;margin-top:4px;margin-bottom:24px}
+  .price-includes{text-align:left;margin-bottom:28px}
+  .price-includes li{list-style:none;padding:6px 0;font-size:14px;color:#CBD5E1;
+    border-bottom:1px solid rgba(255,255,255,0.06)}
+  .price-includes li::before{content:'✓  ';color:var(--green);font-weight:700}
+  .guarantee{max-width:480px;margin:16px auto 0;font-size:12px;color:#64748B}
+
+  /* ── Free leadmagnet ── */
+  .leadmagnet{background:#ECFDF5;padding:56px 20px;text-align:center}
+  .leadmagnet-inner{max-width:640px;margin:0 auto}
+  .leadmagnet h2{color:var(--green)}
+  .lm-box{background:#fff;border:2px solid var(--green);border-radius:12px;
+    padding:28px 32px;margin-top:24px;text-align:left}
+  .lm-box h3{color:var(--green);font-size:16px;margin-bottom:8px}
+  .lm-box ul{margin:12px 0 0 0}
+  .lm-box ul li{list-style:none;font-size:14px;color:var(--body);padding:4px 0}
+  .lm-box ul li::before{content:'→  ';color:var(--green);font-weight:700}
+  .btn-green{display:inline-block;background:var(--green);color:#fff;
+    font-weight:700;font-size:15px;padding:14px 32px;border-radius:8px;
+    margin-top:20px;transition:opacity .2s}
+  .btn-green:hover{opacity:.9;color:#fff}
+
+  /* ── FAQ ── */
+  .faq{padding:56px 20px;max-width:700px;margin:0 auto}
+  .faq-item{border-bottom:1px solid var(--rule);padding:18px 0}
+  .faq-item strong{display:block;font-size:15px;color:var(--navy);margin-bottom:8px}
+  .faq-item p{font-size:14px}
+
+  /* ── Footer ── */
+  footer{background:var(--cover);color:#475569;text-align:center;padding:28px 20px;font-size:12px}
+  footer a{color:#60A5FA}
+
+  @media(max-width:600px){
+    .hero-stats{gap:12px}.stat{min-width:80px;padding:12px 16px}
+    .stat-num{font-size:22px}.ch-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="colorbar"></div>
+  <div class="hero-badge">★ Ultimate Premium Edition 2026</div>
+  <h1>System Design:<br/><span>The Complete Interview Masterclass</span></h1>
+  <p>Everything you need to walk into any system design interview — from FAANG to unicorn startups — and never go blank again.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">53</span><span class="stat-lbl">Pages</span></div>
+    <div class="stat"><span class="stat-num">13+</span><span class="stat-lbl">Chapters</span></div>
+    <div class="stat"><span class="stat-num">10+</span><span class="stat-lbl">Diagrams</span></div>
+    <div class="stat"><span class="stat-num">50+</span><span class="stat-lbl">Interview Q&amp;As</span></div>
+  </div>
+  <a href="https://sheky3.gumroad.com/l/aeirf" target="_blank" class="btn-primary">Get the Full Guide →</a>
+  <p class="hero-note">or <a href="#free">grab the free 5-page cheat sheet first</a></p>
+</div>
+
+<!-- ═══ PAIN ═══ -->
+<div class="pain">
+  <div class="pain-inner">
+    <div class="section-label">Sound familiar?</div>
+    <h2>Every engineer's system design nightmare</h2>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <h4>You freeze when asked "Design YouTube"</h4>
+        <p>No framework, no structure. You start drawing boxes with no idea where you're going.</p>
+      </div>
+      <div class="pain-card">
+        <h4>You know the concepts but can't explain trade-offs</h4>
+        <p>You've read about Kafka and Redis but can't articulate WHY you'd choose one over the other.</p>
+      </div>
+      <div class="pain-card">
+        <h4>You don't know what "senior-level" thinking looks like</h4>
+        <p>Interviewers keep saying "go deeper" but you don't know what deeper actually means.</p>
+      </div>
+      <div class="pain-card">
+        <h4>You've read 10 blog posts and still feel lost</h4>
+        <p>Information is scattered, contradictory, and none of it tells you what to actually say in an interview room.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WHAT YOU GET ═══ -->
+<section>
+  <div class="section-label">What's inside</div>
+  <h2>Everything you need. Nothing you don't.</h2>
+  <p>Built specifically for engineers preparing for system design interviews — not a textbook, not blog posts copy-pasted together. A focused, structured guide that takes you from blank page to confident architect.</p>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">🗺️</div>
+      <h3>RESHADED Framework</h3>
+      <p>An 8-step structure that turns any vague prompt into a confident 45-minute design session. Never freeze again.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📐</div>
+      <h3>10+ Architecture Diagrams</h3>
+      <p>Visual system diagrams drawn for load balancers, cache layers, Kafka flows, hash rings, microservices, and more.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💬</div>
+      <h3>50+ Interview Q&amp;As</h3>
+      <p>Real questions with model answers — the exact language that distinguishes senior engineers from mid-level candidates.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔢</div>
+      <h3>Real Numbers &amp; Estimation</h3>
+      <p>Latency tables, capacity estimation formulas, and worked Twitter-scale examples with actual math.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🏗️</div>
+      <h3>6 Full Case Studies</h3>
+      <p>URL Shortener, Twitter, WhatsApp, Netflix, Uber, and Google Drive — each broken down component by component.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⭐</div>
+      <h3>Interview Angle Boxes</h3>
+      <p>Every chapter ends with the exact phrases, reasoning patterns, and vocabulary that signal senior-level thinking.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHAPTERS ═══ -->
+<div class="chapters">
+  <div class="chapters-inner">
+    <div class="section-label">Table of Contents</div>
+    <h2>13 Chapters. Everything covered.</h2>
+    <div class="ch-grid">
+      <div class="ch-item"><div class="ch-num">01</div><div class="ch-text"><strong>How to Approach System Design</strong><span>RESHADED framework · Estimation · Back-of-Envelope</span></div></div>
+      <div class="ch-item"><div class="ch-num">02</div><div class="ch-text"><strong>Scalability</strong><span>Horizontal/Vertical · Load Balancer Diagram · Stateless</span></div></div>
+      <div class="ch-item"><div class="ch-num">03</div><div class="ch-text"><strong>Databases — SQL vs NoSQL &amp; CAP</strong><span>ACID · 4 NoSQL Types · CAP Theorem · Decision Framework</span></div></div>
+      <div class="ch-item"><div class="ch-num">04</div><div class="ch-text"><strong>Caching</strong><span>Cache Layer Diagram · Cache-Aside · Eviction · Stampede</span></div></div>
+      <div class="ch-item"><div class="ch-num">05</div><div class="ch-text"><strong>Message Queues &amp; Kafka</strong><span>Kafka Flow Diagram · Kafka vs RabbitMQ · Delivery Guarantees</span></div></div>
+      <div class="ch-item"><div class="ch-num">06</div><div class="ch-text"><strong>API Design</strong><span>REST · GraphQL · gRPC · Rate Limiting Algorithms · API Gateway</span></div></div>
+      <div class="ch-item"><div class="ch-num">07</div><div class="ch-text"><strong>CDN</strong><span>CDN Architecture Diagram · Push vs Pull · Cache-Control</span></div></div>
+      <div class="ch-item"><div class="ch-num">08</div><div class="ch-text"><strong>Consistent Hashing</strong><span>Hash Ring Diagram · Virtual Nodes · Sharding Strategies</span></div></div>
+      <div class="ch-item"><div class="ch-num">09</div><div class="ch-text"><strong>Replication &amp; Fault Tolerance</strong><span>Leader-Follower Diagram · Quorum Math · Raft Consensus</span></div></div>
+      <div class="ch-item"><div class="ch-num">10</div><div class="ch-text"><strong>Microservices</strong><span>Architecture Diagram · Circuit Breaker · Saga Pattern · CQRS</span></div></div>
+      <div class="ch-item"><div class="ch-num">11</div><div class="ch-text"><strong>Case Studies: URL Shortener, Twitter, WhatsApp</strong><span>Full architecture breakdowns with diagrams and data models</span></div></div>
+      <div class="ch-item"><div class="ch-num">12</div><div class="ch-text"><strong>System Design Cheat Sheet</strong><span>Key numbers · Tech selection · 10 Golden Rules · Interview checklist</span></div></div>
+      <div class="ch-item"><div class="ch-num">13</div><div class="ch-text"><strong>BONUS: Netflix, Uber, Google Drive</strong><span>Advanced case studies asked at senior FAANG interviews</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DIAGRAMS ═══ -->
+<section class="diagrams">
+  <div class="section-label">Visual Learning</div>
+  <h2>Architecture diagrams built into every chapter</h2>
+  <p>Not just text — every complex concept is accompanied by a visual architecture diagram drawn to professional standards.</p>
+  <div class="diagram-list">
+    <div class="diagram-card"><div class="icon">⚖️</div><h4>Load Balancer</h4><p>Client → LB → Servers → DB + Redis</p></div>
+    <div class="diagram-card"><div class="icon">⚡</div><h4>Cache Layers</h4><p>App → Redis → PostgreSQL flow with hit/miss paths</p></div>
+    <div class="diagram-card"><div class="icon">📨</div><h4>Kafka Flow</h4><p>Producers → Topic → Consumer Groups</p></div>
+    <div class="diagram-card"><div class="icon">🔗</div><h4>Hash Ring</h4><p>Consistent hashing with virtual nodes</p></div>
+    <div class="diagram-card"><div class="icon">👑</div><h4>Replication</h4><p>Leader → Followers with async propagation</p></div>
+    <div class="diagram-card"><div class="icon">🔗</div><h4>Microservices</h4><p>API Gateway → Services → Data stores</p></div>
+    <div class="diagram-card"><div class="icon">🌐</div><h4>CDN Pull</h4><p>Origin → CDN PoPs → Global users</p></div>
+    <div class="diagram-card"><div class="icon">🔗</div><h4>URL Shortener</h4><p>Full architecture from browser to DB</p></div>
+  </div>
+</section>
+
+<!-- ═══ SAMPLE Q&A ═══ -->
+<div class="qa-section">
+  <div class="qa-inner">
+    <div class="section-label">Sample content</div>
+    <h2>50+ Interview Q&amp;As with model answers</h2>
+    <p>Every chapter ends with real interview questions and answers written to demonstrate senior-level thinking.</p>
+    <div class="qa-list">
+      <div class="qa-item">
+        <div class="q">Q: How do you handle cache invalidation — the "hardest problem in CS"?</div>
+        <div class="a">A: Three strategies: (1) TTL-based expiry — simplest, acceptable staleness. (2) Event-driven invalidation — when a DB record updates, publish an event that deletes the cache key. (3) Write-through — update cache synchronously on every write. In interviews say: "I'd use TTL as the safety net and event-driven invalidation for high-consistency requirements."</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">Q: How does Kafka guarantee message ordering?</div>
+        <div class="a">A: Kafka guarantees ordering WITHIN a partition, not across partitions. All messages with the same partition key (e.g., user_id) go to the same partition, ensuring ordered processing per user. Different users' events can be processed in parallel across partitions. This is why partition key selection is critical in system design.</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">Q: When would you choose Cassandra over PostgreSQL?</div>
+        <div class="a">A: Cassandra when you need massive write throughput with time-series or append-only data — e.g., IoT sensor data, activity logs, message history. Cassandra is optimised for writes (append-only LSM tree) and can handle millions of writes/sec across many nodes. PostgreSQL is superior for complex queries, joins, and ACID transactions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AUTHOR ═══ -->
+<section class="author">
+  <div class="author-avatar">👨‍💻</div>
+  <h2>Written by Shekhar Patil</h2>
+  <p>Software engineer and system design practitioner. This guide distills everything that actually matters in system design interviews — the frameworks, the numbers, the analogies, and the exact language that signals senior-level thinking. No filler, no fluff.</p>
+</section>
+
+<!-- ═══ FREE LEADMAGNET ═══ -->
+<div class="leadmagnet" id="free">
+  <div class="leadmagnet-inner">
+    <div class="section-label">Free Gift</div>
+    <h2>Start with the Free 5-Page Cheat Sheet</h2>
+    <p>Not sure yet? Download the free System Design Cheat Sheet — 5 pages, everything essential, no email required.</p>
+    <div class="lm-box">
+      <h3>📄 System Design Cheat Sheet — Free Edition</h3>
+      <p style="font-size:13px;color:#475569;margin-bottom:8px">5 pages of essential, interview-ready reference material:</p>
+      <ul>
+        <li>RESHADED Framework with exact time allocation</li>
+        <li>Latency numbers table (memorise these cold)</li>
+        <li>Technology selection guide — what to use and when</li>
+        <li>Rate limiting algorithms comparison</li>
+        <li>CAP Theorem decision tree</li>
+        <li>Case study quick reference for 6 real systems</li>
+        <li>The 10 Golden Rules of System Design</li>
+      </ul>
+      <a href="System_Design_CheatSheet_FREE.pdf" class="btn-green" download>Download Free Cheat Sheet (PDF) →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRICING ═══ -->
+<div class="pricing" id="pricing">
+  <div class="section-label" style="color:var(--gold)">Get the full guide</div>
+  <h2 style="color:#fff;max-width:600px;margin:0 auto 8px">One guide. Zero excuses.</h2>
+  <p style="color:#94A3B8;max-width:500px;margin:0 auto">Lifetime access. Instant download. No subscription.</p>
+  <div class="price-box">
+    <div class="price">$19</div>
+    <div class="price-sub">One-time payment · Instant PDF download</div>
+    <ul class="price-includes">
+      <li>53-page Premium PDF (Ultimate Edition)</li>
+      <li>10+ Architecture Diagrams</li>
+      <li>50+ Interview Q&amp;As with model answers</li>
+      <li>6 Full Case Studies (URL Shortener → Google Drive)</li>
+      <li>RESHADED Framework + Interview Checklists</li>
+      <li>Worked capacity estimation examples</li>
+      <li>Free 5-page Cheat Sheet included</li>
+      <li>Lifetime access — updates included</li>
+    </ul>
+    <a href="https://sheky3.gumroad.com/l/aeirf" target="_blank" class="btn-primary" style="display:block;text-align:center">Get Instant Access →</a>
+  </div>
+  <p class="guarantee">🔒 If this guide doesn't help you feel dramatically more confident in system design interviews, just ask for a refund. No questions asked.</p>
+</div>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq">
+  <div class="section-label">FAQ</div>
+  <h2>Questions</h2>
+  <div class="faq-item">
+    <strong>Who is this guide for?</strong>
+    <p>Software engineers preparing for system design interviews at any level — from new grad to principal engineer. Most useful for engineers targeting roles at FAANG, high-growth startups, or companies with rigorous interview processes.</p>
+  </div>
+  <div class="faq-item">
+    <strong>I already know some of this. Will there be new material?</strong>
+    <p>The value isn't just knowledge — it's the structure and interview framing. Most engineers know what Redis is. Far fewer can immediately articulate when to choose Redis over Cassandra, with the exact numbers and trade-offs that impress interviewers. That's what this guide gives you.</p>
+  </div>
+  <div class="faq-item">
+    <strong>What format is the guide?</strong>
+    <p>A professionally designed PDF, 53 pages, optimised for both screen reading and printing. Includes full-colour architecture diagrams, styled callout boxes, and syntax-highlighted code examples.</p>
+  </div>
+  <div class="faq-item">
+    <strong>Does this cover senior-level interviews?</strong>
+    <p>Yes. Chapter 13 covers Netflix, Uber, and Google Drive — the case studies most commonly asked at senior and staff-level interviews. The Q&amp;A sections in every chapter are written for senior-level responses.</p>
+  </div>
+  <div class="faq-item">
+    <strong>Is there a free version?</strong>
+    <p>Yes — the free 5-page Cheat Sheet covers the essential reference material. The full 53-page guide goes significantly deeper on every topic with diagrams, worked examples, and interview Q&amp;As.</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Shekhar Patil · System Design: The Complete Interview Masterclass<br/>
+  For questions: <a href="mailto:sheky.patil@gmail.com">sheky.patil@gmail.com</a></p>
+</footer>
+
+</body>
+</html>
